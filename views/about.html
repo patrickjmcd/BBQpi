@@ -1,0 +1,94 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>BBQpi - About</title>
+		
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/css/coffin.css">
+		
+	</head>
+	
+	<body>
+		<div class="coffin">
+			<div class="bar">BBQpi</div>
+				<ul class="nav">
+					<li><a data-coffin="click" href="/">Current BBQ</a></li>
+					<li><a data-coffin="click" href="/newBBQ">New BBQ</a></li>
+					<li><a data-coffin="click" href="/oldBBQ">Previous BBQs</a></li>
+					<li><a data-coffin="click" href="/about">About</a></li>
+				</ul>
+			</div>
+				
+		<div class="page">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<h1>About BBQpi</h1>
+						<h2>Created by Patrick J. McDonagh</h2>
+					</div>
+					
+					<div class="col-md-4">
+						<p></p>
+					</div>
+				</div>
+			
+				<div class="row">
+					<div class="col-lg-12">
+						<h3>Dependencies</h3>
+						<ul>
+							<li>Node.JS</li>
+							<ul>
+								<li>MySQL</li>
+								<li>Express</li>
+								<li>SerialPort</li>
+							</ul>
+							<li>Hardware</li>
+							<ul>
+								<li>Serial Device(I used an arduino.)</li>
+								<li>Two temperature probes</li>
+								<li>Remotely controlled power outlet</li>
+							</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<!-- JS -->
+		<script src="/js/coffin.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		
+		<script>
+			    $('#startBtn').click(function(event){
+				
+				event.preventDefault();
+				var bbqName = $('#bbqName').val();
+				var meat1 = $('#meat1type option:selected').attr('val');
+				var meat1temp = $('#meat1temp').val();
+				var meat2 = $('#meat2type option:selected').attr('val');
+				var meat2temp =$('#meat2temp').val();
+				
+				document.location.href="http://192.168.1.102/startBBQ/" + bbqName  + "/m1/" + meat1+"/m1t/"+meat1temp + "/m2/" + meat2 +"/m2t/" + meat2temp;
+			})		
+			
+			
+			
+			
+		
+		</script>
+		
+	</body>
+</html>

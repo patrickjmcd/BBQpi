@@ -1,0 +1,201 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>BBQpi</title>
+		
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		
+		
+		
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/css/coffin.css">
+		
+	</head>
+	
+	<body>
+		<div class="coffin">
+			<div class="bar">BBQpi</div>
+				<ul class="nav">
+					<li><a data-coffin="click" href="/">Current BBQ</a></li>
+					<li><a data-coffin="click" href="/newBBQ">New BBQ</a></li>
+					<li><a data-coffin="click" href="/oldBBQ">Previous BBQs</a></li>
+					<li><a data-coffin="click" href="/about">About</a></li>
+				</ul>
+				</div>
+		<div class="page">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<h1>BBQpi</h1>
+						<h2 id="bbqName">loading name...</h2>
+						<h3> Started: <span id="startTime">loading...</span></h3>
+					</div>
+					
+					
+				</div>
+			
+				<div class="row">
+					<div class="col-lg-12">
+						<div id="tempGraph" style="min-width: 310px; height: 500px; margin: 0 auto; padding-bottom:40px;">Please be patient. The graph is loading.</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<!-- JS -->
+		<script src="/js/coffin.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		
+		<script>
+		meatTemp = <%=meatTempObject%>;
+		pitTemp = <%=pitTempObject%>;
+		heatStatus = <%=heatStatusObject%>;
+		
+    	bbqData = "<%=bbqArray%>";
+    	bbqReplaced = bbqData.replace(/&quot;/ig, '"');
+    	bbqParsed = JSON.parse(bbqReplaced);
+    	startTime = new Date(bbqParsed.startTime);
+    	
+    	$('#bbqName').text(bbqParsed.name + ": "+ bbqParsed.meat1name +" & " + bbqParsed.meat2name);
+    	$('#startTime').text(startTime);
+    	$('#tempGraph').highcharts({
+		            
+		            
+		            title: {
+		                text: 'Smoking Temperatures',
+		                x: -20 //center
+		            },
+		            subtitle: {
+		                text: 'Low & Slow!',
+		                x: -20
+		            },
+		            xAxis: {
+		                type: 'datetime',
+                        tickInterval: 3600 * 250, // fifteen minutes
+                        tickWidth: 0,
+                    gridLineWidth: 1,
+                    labels: {
+                        align: 'center',
+                        x: -3,
+                        y: 20,
+                        formatter: function() {
+                            return Highcharts.dateFormat('%l:%M %p', this.value);
+                            }
+                        }
+                    },
+		            yAxis: [{
+		                labels: {
+			                format: '{value}°F',
+			                style: {
+			                    color: 'black'
+			                }
+			            },
+			            title: {
+		                    text: 'Temperature (°F)',
+		                    style: {
+			                    color: 'black'
+			                }
+		                },
+		                plotLines: [{
+		                    value: 0,
+		                    width: 1,
+		                    color: '#808080'
+		                }]
+		            },{
+			            labels: {
+			                format: '{value}',
+			                style: {
+			                    color: "red"
+			                }
+			            },
+			            title: {
+		                    text: 'Heat Status',
+		                    style: {
+			                    color: "red"
+			                }
+		                },
+		                plotLines: [{
+		                    value: 0,
+		                    width: 1,
+		                    color: '#808080'
+		                }],
+		                opposite: true
+		            }],
+		            rangeSelector: {
+						buttons: [{
+							count: 1,
+							type: 'minute',
+							text: '1M'
+						}, {
+							count: 5,
+							type: 'minute',
+							text: '5M'
+						}, {
+							type: 'all',
+							text: 'All'
+						}],
+						inputEnabled: false,
+						selected: 0
+					},
+		            
+		            tooltip: {
+		                shared: true
+		            },
+		            legend: {
+		                layout: 'horizontal',
+		                align: 'center',
+		                verticalAlign: 'bottom',
+		                borderWidth: 0
+		            },
+		            series: [{
+		                name: 'Heater Status',
+		                data: heatStatus,
+		                yAxis:1
+		            }, {
+		                name: 'Pit Temp',
+		                data: pitTemp
+		            }, {
+		                name: 'Meat Temp',
+		                data: meatTemp
+		            }],
+		            plotOptions: {
+					    line: {
+					        animation: false
+					    },
+					    series: {
+			                marker: {
+			                    enabled: false
+			                }
+			            }					
+	            	}
+		        });
+
+		
+		
+		
+		
+			$(function () {
+		        
+		    
+		    Highcharts.setOptions({
+				global: {
+					useUTC: false
+				}
+				});
+			});
+		</script>
+		
+	</body>
+</html>

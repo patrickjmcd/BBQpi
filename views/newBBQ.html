@@ -1,0 +1,120 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>BBQpi - New BBQ</title>
+		
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/css/coffin.css">
+		
+	</head>
+	
+	<body>
+		<div class="coffin">
+			<div class="bar">BBQpi</div>
+				<ul class="nav">
+					<li><a data-coffin="click" href="/">Current BBQ</a></li>
+					<li><a data-coffin="click" href="/newBBQ">New BBQ</a></li>
+					<li><a data-coffin="click" href="/oldBBQ">Previous BBQs</a></li>
+					<li><a data-coffin="click" href="/about">About</a></li>
+				</ul>
+			</div>
+				
+		<div class="page">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<h1>BBQpi</h1>
+						<h2>Set up a new BBQ</h2>
+					</div>
+					
+					<div class="col-md-4">
+						<p></p>
+					</div>
+				</div>
+			
+				<div class="row">
+					<div class="col-lg-12">
+						<form class="form-horizontal" role="form">
+							<div id="meatForm">
+							<div class="form-group">
+								<label for="bbqName" class="col-sm-3 control-label">BBQ Name</label>
+								<input type="text" id="bbqName" placeholder="BBQ Name">
+							</div>
+							
+							<div class="form-group">
+							  <label for="meatType" class="col-sm-3 control-label">Meat Type</label>
+						      <select type="text" class="form-control" id="meatType" min="0" max="10" step="1" placeholder="Select Meat Type" style="width:50%;">
+						      	<option val="0" selected>Select a meat type</option>
+						      	<% for (var i=0; i<meat.length; i++){ %>
+						    		<option val="<%=meat[i][0]%>"><%=meat[i][1]%></option>
+								<% } %>
+						      </select>
+						      
+						      <br/>
+						      <div class="row">
+							      <label for="meatTemp" class="col-sm-3 control-label">Meat Target Temp</label>
+							      <input type="number" id="meatTemp" placeholder="Target Temperature" style="width:25%;">
+						      </div>
+						      
+						      <div class="row">
+							      <label for="pitTemp" class="col-sm-3 control-label">Pit Target Temp</label>
+							      <input type="number" id="pitTemp" placeholder="Target Temperature" style="width:25%;">
+						      </div>
+						      
+						      <div class="row">
+							      <label for="deadband" class="col-sm-3 control-label">Deadband</label>
+							      <input type="number" id="deadband" placeholder="Deadband" style="width:25%;">
+						      </div>
+						   </div>
+						   
+							
+							<div class="form-group">
+						    <div class="col-sm-10">
+						      <button type="submit" id="startBtn" class="btn btn-default">Start BBQ</button>
+						    </div>
+						  </div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<!-- JS -->
+		<script src="/js/coffin.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		
+		<script>
+			    $('#startBtn').click(function(event){
+				
+				event.preventDefault();
+				var bbqName = $('#bbqName').val().replace(/ /ig, "_");
+				var meat = $('#meatType option:selected').attr('val');
+				var meatTemp = $('#meatTemp').val();
+				var pitTemp = $('#pitTemp').val();
+				var deadband= $('#deadband').val();
+				
+				document.location.href="http://192.168.1.102/startBBQ/" + bbqName  + "/m/" + meat+"/mtemp/"+meatTemp + "/ptemp/" + pitTemp +"/db/" + deadband;
+			})		
+			
+			
+			
+			
+		
+		</script>
+		
+	</body>
+</html>

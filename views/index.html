@@ -1,0 +1,226 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>BBQpi</title>
+		
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+		<script type='text/javascript' src='/socket.io/socket.io.js'></script>
+		
+		
+		
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+		
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="/css/coffin.css">
+		
+	</head>
+	
+	<body>
+		<div class="coffin">
+			<div class="bar">BBQpi</div>
+				<ul class="nav">
+					<li><a data-coffin="click" href="/">Current BBQ</a></li>
+					<li><a data-coffin="click" href="/newBBQ">New BBQ</a></li>
+					<li><a data-coffin="click" href="/oldBBQ">Previous BBQs</a></li>
+					<li><a data-coffin="click" href="/about">About</a></li>
+				</ul>
+				</div>
+		<div class="page">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8">
+						<h1>BBQpi</h1>
+						<h2>Live Data Demo</h2>
+					</div>
+					
+					<div class="col-md-4">
+						<h1>Live Values</h1>
+						<table class="table table-hover">
+							<tr><th>Meat Temp:</th><td><span id="meatTemp"></span></td></tr>
+							<tr><th>Pit Temp:</th><td><span id="pitTemp"></span></td></tr>
+							<tr><th>Heat Status:</th><td><span id="heatStatus"></span></td></tr>
+						</table>
+						
+						<button id="resumeBtn" class="btn btn-warning" style="width:49%;">Resume BBQ</button>
+						<button id="stopBtn" class="btn btn-default" style="width:49%;">Stop BBQ</button>
+					</div>
+				</div>
+			
+				<div class="row">
+					<div class="col-lg-12">
+					<!-min-width: 310px; height: 500px; -!>
+						<div id="tempGraph" style="margin: 0 auto">Please be patient. The graph is loading.</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<!-- JS -->
+		<script src="/js/coffin.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		
+		<script>
+			var messages = [];
+    var socket = io.connect('http://192.168.1.102:80');
+    
+ 
+        // on message received we print all the data inside the #container div
+    socket.on('notification', function (data) {
+    	//console.log(data.meatTempObject);
+    	$('#tempGraph').highcharts({
+		            
+		            
+		            title: {
+		                text: 'Smoking Temperatures',
+		                x: -20 //center
+		            },
+		            subtitle: {
+		                text: 'Low & Slow!',
+		                x: -20
+		            },
+		            xAxis: {
+		                type: 'datetime',
+                        tickInterval: 3600 * 250, // fifteen minutes
+                        tickWidth: 0,
+                        gridLineWidth: 1,
+                        labels: {
+                            align: 'center',
+                            x: -3,
+                            y: 20,
+                            formatter: function() {
+                                return Highcharts.dateFormat('%l:%M %p', this.value);
+                            }
+                        }
+                    },
+		            yAxis: [{
+		                labels: {
+			                format: '{value}°F',
+			                style: {
+			                    color: 'black'
+			                }
+			            },
+			            title: {
+		                    text: 'Temperature (°F)',
+		                    style: {
+			                    color: 'black'
+			                }
+		                },
+		                plotLines: [{
+		                    value: 0,
+		                    width: 1,
+		                    color: '#808080'
+		                }]
+		            },{
+			            labels: {
+			                format: '{value}',
+			                style: {
+			                    color: "red"
+			                }
+			            },
+			            title: {
+		                    text: 'Heat Status',
+		                    style: {
+			                    color: "red"
+			                }
+		                },
+		                plotLines: [{
+		                    value: 0,
+		                    width: 1,
+		                    color: '#808080'
+		                }],
+		                opposite: true
+		            }],
+		            rangeSelector: {
+						buttons: [{
+							count: 1,
+							type: 'minute',
+							text: '1M'
+						}, {
+							count: 5,
+							type: 'minute',
+							text: '5M'
+						}, {
+							type: 'all',
+							text: 'All'
+						}],
+						inputEnabled: false,
+						selected: 0
+					},
+		            
+		            tooltip: {
+		                shared: true
+		            },
+		            legend: {
+		                layout: 'horizontal',
+		                align: 'center',
+		                verticalAlign: 'bottom',
+		                borderWidth: 0
+		            },
+		            series: [{
+		                name: 'Heater Status',
+		                data: data.heatStatusObject,
+		                yAxis:1
+		            }, {
+		                name: 'Pit Temp',
+		                data: data.pitTempObject
+		            }, {
+		                name: 'Meat Temp',
+		                data: data.meatTempObject
+		            }],
+		            plotOptions: {
+					    line: {
+					        animation: false
+					    },
+					    series: {
+			                marker: {
+			                    enabled: false
+			                }
+			            }					
+	            	}
+		        });
+        $("#meatTemp").text(data.cmeatTempObject[0][1]);
+        $("#pitTemp").text(data.cpitTempObject[0][1]);
+        if (data.cheatStatusObject[0][1] == 1){
+	        $("#heatStatus").text("ON");
+        } else {
+	        $("#heatStatus").text("OFF");
+        }
+        
+      });
+
+		
+		
+		
+		
+			$(function () {
+		        
+		    
+		    Highcharts.setOptions({
+				global: {
+					useUTC: false
+				}
+			});
+			});
+    $('#resumeBtn').click(function(event){
+    	event.preventDefault();
+    	document.location.href="http://192.168.1.102/resumeBBQ";
+	});
+	
+	$('#stopBtn').click(function(event){
+    	event.preventDefault();
+    	document.location.href="http://192.168.1.102/stopBBQ";
+	});	
+		</script>
+		
+	</body>
+</html>
